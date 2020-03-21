@@ -1,40 +1,35 @@
 // Vertical Sidebar Logic
 
-function loadSidebarElements(){
-    var toggleButton = document.getElementById('navToggleButton');
-    var navWrapper = document.getElementById('navWrapper');
-    var navBar = document.getElementById('navBar');
-    var main = document.getElementById('mainWrapper');
-}
+var toggleButton = document.getElementById('navToggleButton');
+var navWrapper = document.getElementById('navWrapper');
+var navBar = document.getElementById('navBar');
+var main = document.getElementById('mainWrapper');
 
 function toggleCollapseVerticalNav(){
     // open menu
     if(isNavWrapperCollapsed()){
         setNavWrapperCollapsed(false);
-        setNoScroll(true);
+        setMainHidden(true);
         setNavBarDisplayNone(false);
     // close menu
     }else{
         setNavWrapperCollapsed(true);
-        setNoScroll(false);
+        setMainHidden(false);
         setNavBarDisplayNone(true); 
     }
 }
 
-function setNoScroll(value){
+function setMainHidden(value){
     if(value){
-        if(!document.body.classList.contains('no-scroll')){
-            document.body.classList.add('no-scroll');
-        }
-        if(!document.documentElement.classList.contains('no-scroll')){
-            document.documentElement.classList.add('no-scroll'); 
+        if(main.style.display != "none"){
+            document.body.classList.add("bg-custom-fill");
+            main.style.display = "none";
         }
     }else{
-        if(document.body.classList.contains('no-scroll')){
-            document.body.classList.remove('no-scroll');
-        }
-        if(document.documentElement.classList.contains('no-scroll')){
-            document.documentElement.classList.remove('no-scroll'); 
+        if(main.style.display == "none")
+        {
+            document.body.classList.remove("bg-custom-fill");
+            main.style.display = "";
         }
     }
 }
@@ -70,15 +65,14 @@ function setNavBarDisplayNone(value){
 
 // undo hidden state of button when resizing to bigger screen
 $(window).ready(function() {
-    loadSidebarElements();
 
     if (window.innerWidth >= 768) {
-        setNoScroll(false);
+        setMainHidden(false);
         setNavWrapperCollapsed(false);
         setNavBarDisplayNone(false);
     }
     else {
-        setNoScroll(false);
+        setMainHidden(false);
         setNavWrapperCollapsed(true);
         setNavBarDisplayNone(true);
     }
@@ -89,12 +83,12 @@ $(window).ready(function() {
 
 $(window).resize(function() {
     if (window.innerWidth >= 768) { // width - no scollbar, outerWidth - scrollbar + window frame, innerWidth - with scrollbar, no window frame.
-        setNoScroll(false);
+        setMainHidden(false);
         setNavWrapperCollapsed(false);
         setNavBarDisplayNone(false);
     }
     else {
-        setNoScroll(false);
+        setMainHidden(false);
         setNavWrapperCollapsed(true);
         setNavBarDisplayNone(true);
     }
