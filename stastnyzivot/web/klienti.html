@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="sk">
+
+<head>
+  <title>O nás | Šťastný život</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <!-- Bootstrap -->
+  <link href="css/bootstrap.css" rel="stylesheet" media="screen">
+  <link href="css/custom.css" rel="stylesheet" media="screen">
+  <link href="css/image-popup.css" rel="stylesheet" media="screen">
+
+  <noscript>
+    <style>
+      .jshidden {
+        display: block;
+      }
+    </style>
+  </noscript>
+</head>
+
+<body class="jshidden">
+
+  <!-- Body wrapper begin -->
+  <div class="container-fluid row p-0 m-0">
+
+    <!-- Nav wrapper begin -->
+    <div id="navWrapper" class="sidebar sidebar-sticky bg-custom-fill col-md-5 col-lg-4 col-xl-3">
+
+      <div class="d-flex flex-row-reverse pb-5">
+        <button id="navToggleButton" type="button" onclick="toggleCollapseVerticalNav()"
+          class="btn btn-light d-block d-md-none" aria-controls="navbarMenu" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <img src="menu_icon.png" class="img-fluid" width="30rem">
+        </button>
+      </div>
+
+      <nav id="navBar">
+
+        <!-- Nav header begin -->
+        <div class="container pb-5">
+          <div class="row justify-content-center">
+            <div class="col-5">
+              <div class="row">
+                <img src="../foto vyber/logo_transparent.png" class="img-fluid m-auto" style="margin:auto">
+              </div>
+            </div>
+            <div class="col-6 pt-3">
+              <div class="container d-flex h-100">
+                <h1 class="align-self-center text-center">Šťastný <br /> život</h1>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col align-self-center">
+              <h4 class="text-center">Nezisková organizácia</h4>
+            </div>
+          </div>
+        </div>
+        <!-- Nav header end -->
+
+        <ul class="nav nav-pills flex-column">
+          <li class="nav-item text-center mx-5 my-2">
+            <a href="index.html" class="nav-link">O nás</a>
+          </li>
+          <li class="nav-item text-center mx-5 my-2">
+            <a href="klienti.html" class="nav-link active">Klienti</a>
+          </li>
+          <li class="nav-item text-center mx-5 my-2">
+            <a href="aktivity.html" class="nav-link">Aktivity</a>
+          </li>
+          <li class="nav-item text-center mx-5 my-2">
+            <a href="galeria.html" class="nav-link">Galéria</a>
+          </li>
+          <li class="nav-item text-center mx-5 my-2">
+            <a href="sponzori.html" class="nav-link">Sponzori</a>
+          </li>
+          <li class="nav-item text-center mx-5 my-2">
+            <a href="kontakt.html" class="nav-link">Kontakt</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <!-- Nav wrapper end -->
+
+    <div role="main" class="container col-md-6 col-lg-7 col-xl-8">
+
+      <h1 class="text-center py-5">
+        Klienti
+      </h1>
+
+      <p class="text-justify">
+        Naša nezisková organizácia a zariadenie DSS – Denný stacionár pre mentálne postihnuté deti a mládež fungovala od
+        roku 2002 do roku 2018 v
+        obci Mojmírovce so spádovou oblasťou Veľká Dolina, Svätoplukove, Štefanovičovej a Poľnom Kesove.
+        Cieľovou skupinou je mentálne a telesne postihnutá mládež s diagnózami detskej mozgovej obrny, Downovým
+        syndrómom, autizmom, mikrocefalom, kvadruparézou a ďalšími.
+      </p>
+
+      <br />
+
+      <p class="text-justify">
+        Od roku 2019 sa zaoberáme mladými ľuďmi so zdravotným postihnutím v našom zariadení formou klubovej činnosti.
+      </p>
+    </div>
+  </div>
+  <!-- Body wrapper end -->
+
+  <!-- The Modal -->
+  <div id="imgPopupModal" class="modal">
+
+    <!-- The Close Button -->
+    <span id="imgPopupCloseBtn">&times;</span>
+
+    <!-- Modal Content (The Image) -->
+    <img class="modal-content" id="modalImg">
+
+    <!-- Modal Caption (Image Text) -->
+    <div id="modalImgCaption"></div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery.js"></script>
+  <script src="js/custom.js"></script>
+  <script src="js/image-popup.js"></script>
+</body>
+
+</html>

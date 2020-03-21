@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="sk">
+
+<head>
+  <title>O nás | Šťastný život</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <!-- Bootstrap -->
+  <link href="css/bootstrap.css" rel="stylesheet" media="screen">
+  <link href="css/custom.css" rel="stylesheet" media="screen">
+  <link href="css/image-popup.css" rel="stylesheet" media="screen">
+
+  <noscript>
+    <style>
+      .jshidden {
+        display: block;
+      }
+    </style>
+  </noscript>
+</head>
+
+<body class="jshidden">
+
+  <!-- Body wrapper begin -->
+  <div class="container-fluid row p-0 m-0">
+
+    <!-- Nav wrapper begin -->
+    <div id="navWrapper" class="sidebar sidebar-sticky bg-custom-fill col-md-5 col-lg-4 col-xl-3">
+
+      <div class="d-flex flex-row-reverse pb-5">
+        <button id="navToggleButton" type="button" onclick="toggleCollapseVerticalNav()"
+          class="btn btn-light d-block d-md-none" aria-controls="navbarMenu" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <img src="menu_icon.png" class="img-fluid" width="30rem">
+        </button>
+      </div>
+
+      <nav id="navBar">
+
+        <!-- Nav header begin -->
+        <div class="container pb-5">
+          <div class="row justify-content-center">
+            <div class="col-5">
+              <div class="row">
+                <img src="../foto vyber/logo_transparent.png" class="img-fluid m-auto" style="margin:auto">
+              </div>
+            </div>
+            <div class="col-6 pt-3">
+              <div class="container d-flex h-100">
+                <h1 class="align-self-center text-center">Šťastný <br /> život</h1>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col align-self-center">
+              <h4 class="text-center">Nezisková organizácia</h4>
+            </div>
+          </div>
+        </div>
+        <!-- Nav header end -->
+
+        <ul class="nav nav-pills flex-column">
+          <li class="nav-item text-center mx-5 my-2">
+            <a href="index.html" class="nav-link">O nás</a>
+          </li>
+          <li class="nav-item text-center mx-5 my-2">
+            <a href="klienti.html" class="nav-link">Klienti</a>
+          </li>
+          <li class="nav-item text-center mx-5 my-2">
+            <a href="aktivity.html" class="nav-link">Aktivity</a>
+          </li>
+          <li class="nav-item text-center mx-5 my-2">
+            <a href="galeria.html" class="nav-link">Galéria</a>
+          </li>
+          <li class="nav-item text-center mx-5 my-2">
+            <a href="sponzori.html" class="nav-link active">Sponzori</a>
+          </li>
+          <li class="nav-item text-center mx-5 my-2">
+            <a href="kontakt.html" class="nav-link">Kontakt</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <!-- Nav wrapper end -->
+
+    <div role="main" class="container col-md-7 col-lg-8 col-xl-9">
+
+      <h1 class="text-center py-5">
+        Sponzori
+      </h1>
+
+      <p class="text-center">
+        Ďakujeme všetkým sponzorom za podporu našich aktivít.
+        Dúfame, že nám zachováte Vašu priazeň aj do budúcna.
+      </p>
+
+      <hr />
+
+      <br />
+
+      <div class="container">
+        <div class="col-md-12 offset-lg-3 col-lg-6">
+          <ul class="simple-enum" style="list-style-type: none">
+            <li>Deti Dunaja, o. z., Bratislava</li>
+            <li>Nadácia pre deti Slovenska, Bratislava</li>
+            <li>Nadácia Tri kľúče, Bratislava</li>
+            <li>Slovenská humanitná rada, Bratislava</li>
+            <li>Úrad vlády SR</li>
+            <li>Obecné úrady: Mojmírovce, Svätoplukovo, Štefanovičová, Poľný Kesov, Veľká Dolina</li>
+            <li>Stavex s. r. o., Nitra</li>
+            <li>Retono, s. r. o., Mojmírovce</li>
+            <li>VIC, a. s., Mojmírovce</li>
+            <li>Jednota, SD, Mojmírovce</li>
+            <li>OZ Mojmírovské kroky</li>
+            <li>KoLu cakes</li>
+            <li>PD Mojmírovce</li>
+            <li>Tauris Nitria, a. s., Mojmírovce</li>
+            <li>Drevotes, Nitra</li>
+            <li>H. S. H., Veľké Zálužie</li>
+            <li>SPP, a. s., Nitra SOU Mojmírovce</li>
+            <li>SOU Mojmírovce</li>
+            <li>Lux, Tvrdošín</li>
+            <li>Pekáreň Petrovič, Mojmírovce</li>
+            <li>Rematex, Mojmírovce</li>
+            <li>Poľovnícke združenie Mojmírovce</li>
+            <li>pani Mária Čičová</li>
+            <li>Chrum Mojmírovce</li>
+            <li>Diskont Mojmírovce</li>
+            <li>Zelovoc Banás, Mojmírovce</li>
+            <li>Potraviny Perla, Mojmírovce</li>
+            <li>a mnohé rodiny z Mojmíroviec a okolitých dedín</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="dummy-div" />
+
+    </div>
+
+    <!-- Body wrapper end -->
+
+    <!-- The Modal -->
+    <div id="imgPopupModal" class="modal">
+
+      <!-- The Close Button -->
+      <span id="imgPopupCloseBtn">&times;</span>
+
+      <!-- Modal Content (The Image) -->
+      <img class="modal-content" id="modalImg">
+
+      <!-- Modal Caption (Image Text) -->
+      <div id="modalImgCaption"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="js/custom.js"></script>
+    <script src="js/image-popup.js"></script>
+</body>
+
+</html>
