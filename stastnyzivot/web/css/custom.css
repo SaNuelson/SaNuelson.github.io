@@ -76,6 +76,10 @@ button{
   z-index: 200;
 }
 
+#mainWrapper{
+  min-height: 100vw;
+}
+
 .dummy-div {
   height: 10vw; }
 
@@ -89,8 +93,7 @@ button{
 }
 
 .sidebar {
-  transition: width 0.5s; 
-  z-index: 5;
+  transition: width 0.5s;
 }
 
 .sidebar-collapsed {
