@@ -12,13 +12,11 @@ span.onclick = function () {
 $(document).keydown(function (e) { if (e.key === "Escape") tryHidePopup(); })
 
 $(window).on('popstate', function () {
-  if (window.history && window.history.pushState)
-    if ($(location)[0].hash.includes('#popup'))
-      tryHidePopup();
+  if ($(location)[0].hash.includes('#popup'))
+    tryHidePopup();
 });
 
 function tryHidePopup() {
-  console.log("display: " + modal.style.display);
   if (modal.style.display !== "none")
     modal.style.display = "none";
 }
@@ -32,9 +30,6 @@ imgs.forEach((img) => {
     captionText.innerHTML = img.alt;
 
     // add state to history for being able to go back
-    if (window.history && window.history.pushState) {
-      console.log("push")
-      window.history.pushState('forward', null, './#popup');
-    }
+    window.history.pushState('forward', null, '#popup');
   })
 })
