@@ -18,6 +18,7 @@ $(window).on('popstate', function () {
 });
 
 function tryHidePopup() {
+  console.log("display: " + modal.style.display);
   if (modal.style.display !== "none")
     modal.style.display = "none";
 }
