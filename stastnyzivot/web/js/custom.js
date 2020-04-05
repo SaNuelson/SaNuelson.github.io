@@ -72,9 +72,9 @@ $(window).ready(function() {
         setNavBarDisplayNone(false);
     }
     else {
-        setMainHidden(false);
-        setNavWrapperCollapsed(true);
-        setNavBarDisplayNone(true);
+        setMainHidden(true);
+        setNavWrapperCollapsed(false);
+        setNavBarDisplayNone(false);
     }
 
     // show page to hide sidebar collapsing
