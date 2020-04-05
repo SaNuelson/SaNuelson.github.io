@@ -11,10 +11,7 @@ span.onclick = function () {
 
 $(document).keydown(function (e) { if (e.key === "Escape") tryHidePopup(); })
 
-$(window).on('popstate', function () {
-  if ($(location)[0].hash.includes('#popup'))
-    tryHidePopup();
-});
+$(window).on('popstate', tryHidePopup);
 
 function tryHidePopup() {
   if (modal.style.display !== "none")
