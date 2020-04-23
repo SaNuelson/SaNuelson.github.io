@@ -1,3 +1,14 @@
+// AJAX main loading logic
+
+console.log("Here");
+
+$(".nav-link").bind('click',function(){
+    $("#mainWrapper").load($(this).attr("href") + " #mainWrapper");
+    $(".nav-link .active").classList.remove("active");
+    $(this).classList.add("active");
+    return false;
+})
+
 // Vertical Sidebar Logic
 
 var toggleButton = document.getElementById('navToggleButton');
