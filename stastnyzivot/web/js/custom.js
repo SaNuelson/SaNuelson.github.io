@@ -25,12 +25,9 @@ $(window).resize(function() {
     if (window.innerWidth >= 768) { // width - no scollbar, outerWidth - scrollbar + window frame, innerWidth - with scrollbar, no window frame.
         $("#mainWrapper").show();
         $("#navWrapper").removeClass("sidebar-collapsed");
-        console.log("Resize over 768");
     }
     else {
-        $("#navWrapper").toggleClass("sidebar-collapsed");
-        if($("#mainWrapper").hasClass("sidebar-collapsed"))
-            $("#mainWrapper").hide();
-        console.log("Resize under 768");
+        $("#navWrapper").removeClass("sidebar-collapsed");
+        $("#mainWrapper").show();
     }
 });
