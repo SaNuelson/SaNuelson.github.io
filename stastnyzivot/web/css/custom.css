@@ -81,7 +81,7 @@ button{
 }
 
 .dummy-div {
-  height: 10hw; }
+  height: 20vh; }
 
 .simple-enum{
   list-style-type: none;
@@ -132,7 +132,9 @@ button{
 }
 
 @media (min-width: 768px) {
-
+  #navBar {
+    position: fixed;
+  }
 }
 
 @media (min-width: 1200px) {

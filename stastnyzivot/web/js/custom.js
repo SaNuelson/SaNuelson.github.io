@@ -23,11 +23,10 @@ $(window).resize(function() {
     if (window.innerWidth >= 768) { // width - no scollbar, outerWidth - scrollbar + window frame, innerWidth - with scrollbar, no window frame.
         $("#mainWrapper").show();
         $("#navWrapper").removeClass("sidebar-collapsed");
-        // nav wrapper uncollapsed by default
-        // nav bar displayed by default
     }
     else {
-        // main displayed by default
         $("#navWrapper").toggleClass("sidebar-collapsed");
+        if($("#mainWrapper").hasClass("sidebar-collapsed"))
+            $("#mainWrapper").hide();
     }
 });
