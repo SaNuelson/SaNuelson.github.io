@@ -92,6 +92,10 @@ button{
   padding: 1rem 0 0 0;
 }
 
+.max-w-100 {
+  max-width: 100% !important;
+}
+
 .max-w-inherit {
   max-width: inherit !important;
 }
@@ -107,10 +111,9 @@ button{
   z-index: 5;
 }
 
-.no-scroll {
-  margin: 0;
-  height: 100%;
-  overflow: hidden; }
+.sidebar-collapsed #navBar {
+  display: none;
+}
 
 @media (min-width: 576px) {
   .card-columns {
@@ -126,6 +129,10 @@ button{
       -moz-column-count: 2;
       column-count: 2;
   }
+}
+
+@media (min-width: 768px) {
+
 }
 
 @media (min-width: 1200px) {

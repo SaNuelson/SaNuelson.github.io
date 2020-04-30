@@ -11,11 +11,15 @@ span.onclick = function () {
 
 $(document).keydown(function (e) { if (e.key === "Escape") tryHidePopup(); })
 
-$(window).on('popstate', tryHidePopup);
+$(window).on('popstate',function(){tryHidePopup(false)});
 
-function tryHidePopup() {
+function tryHidePopup(goBack = true) {
   if (modal.style.display !== "none")
+  {
+    if(window.history && goBack)
+      window.history.back();
     modal.style.display = "none";
+  }
 }
 
 var imgs = [...document.getElementsByClassName('popup-img')];
