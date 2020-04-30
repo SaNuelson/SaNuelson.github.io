@@ -1,3 +1,14 @@
+$(window).on("load hashchange",() => {
+  // check for popup
+  if (window.location.href.includes("#")) {
+    let imgname = window.location.href.match(/\#.*/)[0].substr(1);
+    $("img").each((_, img) => {
+      if (img.src.includes(imgname))
+        $(img).trigger('click');
+    })
+  }
+})
+
 // Get the modal
 var modal = document.getElementById("imgPopupModal");
 var modalImg = document.getElementById("modalImg");
@@ -11,12 +22,11 @@ span.onclick = function () {
 
 $(document).keydown(function (e) { if (e.key === "Escape") tryHidePopup(); })
 
-$(window).on('popstate',function(){tryHidePopup(false)});
+$(window).on('popstate', function () { tryHidePopup(false) });
 
 function tryHidePopup(goBack = true) {
-  if (modal.style.display !== "none")
-  {
-    if(window.history && goBack)
+  if (modal.style.display !== "none") {
+    if (window.history && goBack)
       window.history.back();
     modal.style.display = "none";
   }
@@ -29,8 +39,7 @@ imgs.forEach((img) => {
     modal.style.display = 'block';
     modalImg.src = img.src.replace("-thumbnail.jpg", ".jpg");
     captionText.innerHTML = img.alt;
-
-    // add state to history for being able to go back
-    window.history.pushState('forward', null, '#popup');
+    var imgname = modalImg.src.replace(/^.*[\\\/]/, '').replace(/\.[^.]*/, "");
+    window.history.pushState('forward', null, window.location.href.replace(/\#.*/, "") + "#" + imgname);
   })
 })
