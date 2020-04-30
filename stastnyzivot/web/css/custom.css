@@ -115,6 +115,13 @@ button{
   display: none;
 }
 
+@media (max-height: 660px) {
+  #navBar {
+    position: static !important;
+    min-width: 100%;
+  }
+}
+
 @media (min-width: 576px) {
   .card-columns {
       -webkit-column-count: 2;
@@ -134,6 +141,7 @@ button{
 @media (min-width: 768px) {
   #navBar {
     position: fixed;
+    overflow: auto;
   }
 }
 
