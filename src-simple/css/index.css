@@ -1,0 +1,66 @@
+:root {
+  --bg-black: #111813;
+  --bg-light: #197929;
+  --bg-dark: #083a1d;
+  --fg-default: #2ea55f;
+  --body-margin: 1em;
+}
+
+body {
+  background-color: var(--bg-black);
+  width: calc(100vw - 2 * var(--body-margin));
+  height: calc(100vh - 2 * var(--body-margin));
+  margin: 0;
+  padding: var(--body-margin);
+}
+
+.console {
+  height: calc(100% - 2em);
+  width: calc(100% - 2em);
+  padding: 1em;
+  background-color: var(--bg-dark);
+  display: flex;
+  flex-direction: column;
+
+  color: var(--fg-default);
+  font-size: 1.5em;
+  font-family: monospace;
+  letter-spacing: 0.1em;
+}
+
+.console, .console::before, .console::after {
+  border-radius: 1em;
+}
+
+.console .log {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+
+  height: 100%;
+  width: 100%;
+}
+
+.console .entry {
+  display: flex;
+}
+
+.console p {
+  margin: 0;
+  mask: url(#mask-1);
+}
+
+.console .input {
+  all: inherit;
+  width: 100%;
+}
+
+.console p,
+.console .input {
+  margin-top: 0.1em;
+}
+
+.console .input:focus {
+  outline: none;
+}
