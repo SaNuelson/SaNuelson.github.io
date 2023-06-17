@@ -1,0 +1,116 @@
+@use "sass:math"
+@use "sass:color"
+
+$base-width: 5em
+$base-height: 4em
+$base-bg: #46473E
+
+$hex-side: 1.5em
+$hex-bg: #898984
+
+$ring-dia: 2em
+$ring-bg: #d5cbb9
+
+$dongle-dia: 1em
+$dongle-bg: #556
+$dongle-fg: #aab
+$dongle-stick-bg: linear-gradient(90deg, $dongle-fg, 40%, $dongle-bg 80%)
+$dongle-top-bg: radial-gradient(ellipse at 30% 30%, white, $dongle-fg)
+$dongle-top-scale: 1.2
+
+$switch-time: 0.2s
+$swith-curve: cubic-bezier(1,0,0,1)
+
+/* 
+ * Absolute-centralize element with w width, h height
+ * within parent of pw width, ph height
+ */
+@mixin centralized($pw, $ph, $w, $h)
+  position: absolute
+  width: $w
+  height: $h
+  margin-left: ($pw - $w) / 2
+  margin-top: ($ph - $h) / 2
+
+.base
+  display: inline-block
+  width: $base-width
+  height: $base-height
+  background: $base-bg
+  border-radius: 1.5em
+  box-shadow: 2px 5px color.adjust($base-bg, $lightness: -30%)
+
+  @mixin base-centralized($w, $h)
+    @include centralized($base-width, $base-height, $w, $h)
+    
+  .hex
+    @include base-centralized(math.sqrt(3) * $hex-side, $hex-side)
+    background: $hex-bg
+    z-index: 1
+
+    &::before, &::after
+      content: ''
+      position: absolute
+      width: 0
+      height: 0
+      border-left: math.sqrt(3) * $hex-side / 2 solid transparent
+      border-right: math.sqrt(3) * $hex-side / 2 solid transparent
+
+    &::before
+      top: -1 * $hex-side / 2
+      border-bottom: $hex-side / 2 solid $hex-bg
+
+    &::after
+      bottom: -1 * $hex-side / 2
+      border-top: $hex-side / 2 solid $hex-bg
+
+  .ring
+    @include base-centralized($ring-dia, $ring-dia)
+    background: $ring-bg
+    border-radius: 100%
+    z-index: 2
+
+  .dongle-bot
+    $dia: $dongle-dia
+    @include base-centralized($dia, $dia)
+    background: $dongle-bg
+    border-radius: 100%
+    z-index: 3
+
+  .dongle-stick
+    @include base-centralized($dongle-dia, $dongle-dia)
+    background: $dongle-stick-bg
+    transform-origin: right
+    transform: translate(-1 * $dongle-dia / 2, 0) perspective(5em) rotate3d(0,1,0,45deg)
+    transition: $switch-time $swith-curve
+    z-index: 4
+
+  .dongle-top
+    $dia: $dongle-top-scale * $dongle-dia
+    @include base-centralized($dia, $dia)
+    background: $dongle-top-bg
+    transform: translate(-1 * $dia, 0)
+    border-radius: 100%
+    transition: $switch-time $swith-curve
+    z-index: 5
+
+.switch
+  cursor: pointer
+  
+  input
+    display: none
+
+  input:checked ~ .base .dongle-stick
+    transform: translate(-1 * $dongle-dia / 2, 0) perspective(5em)  rotate3d(0, 1, 0, 135deg)
+
+  input:checked ~ .base .dongle-top
+      $dia: 1.2 * $dongle-dia
+      transform: translate($dia, 0)
+    
+.base .left-info
+  position: absolute
+  height: 0.8 * $base-height
+  margin-top: 0.1 * $base-height
+  width: 4em
+  margin-left: -4em
+  background: $base-bg

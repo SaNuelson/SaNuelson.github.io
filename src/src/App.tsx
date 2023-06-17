@@ -5,11 +5,12 @@ import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
 import "./App.scss";
 import Navigation from "./components/Navigation";
 import Home from "./pages/Home";
+import './css/Crt.css';
 
 class App extends Component {
   render() {
     return (
-      <Container fluid>
+      <Container fluid >
         <BrowserRouter>
           <Navigation></Navigation>
           <Routes>

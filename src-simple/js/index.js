@@ -1,67 +1,23 @@
-import Terminal from './Terminal.js';
+import { init as initSettings, Settings } from './Settings.js';
+import TerminalView from './terminal/TerminalView.js';
+import './SoundPlayer.js';
 
-const consoleInput = document.getElementById("consoleInput");
-const consoleLog = document.getElementById("consoleLog");
-const terminal = new Terminal();
-
-consoleInput.addEventListener('keydown', onUserInput);
-terminal.onInputReceived(onConsoleInput);
-terminal.onOutputSent(onConsoleOutput);
-
+const terminal = new TerminalView(consoleInput, consoleLog);
 consoleInput.focus();
 
-function onUserInput(e) {
-    switch(e.key) {
-        case 'Enter':
-            terminal.submit(e.target.value);
-            consoleInput.value = '';
-            break;
-        case 'Up': case 'ArrowUp':
-            e.preventDefault();
-            consoleInput.value = terminal.prevHistory();
-            break;
-        case 'Down': case 'ArrowDown':
-            e.preventDefault();
-            consoleInput.value = terminal.nextHistory();
-            break;
-        }
-}
 
-function onConsoleInput(message) {
-    let p = document.createElement('p');
-    p.innerHTML = '&gt;' + message;
-    consoleLog.appendChild(p);
-}
+// Settings binding and initialization
+const consoleScreen = document.getElementById('console');
+// Bind CRT flag -> CRT effect
+Settings.crtEffect.addEventListener((opt) => Settings.crtEffect.value ? consoleScreen.classList.add('crt') : consoleScreen.classList.remove('crt'));
+// Bind CRT switch -> CRT flag
+document.getElementById('crtSwitch').addEventListener('change', (e) => { Settings.crtEffect.value = e.target.checked});
 
-function onConsoleOutput(message) {
-    let p = document.createElement('p');
-    printOut(p, message, 50, true);
-    consoleLog.appendChild(p);
-}
+initSettings();
 
-function printOut(element, text, delta, textAware=false) {
-    let i = 0;
-    let j = 0;
-    let interval = setInterval(()=>{
-        if (i < text.length) {
-            if (textAware) {
-                switch(text[i]) {
-                    case ',':
-                        if (j >= 2) break;
-                        j++;
-                        return;
-                    case '.':
-                        if (j >= 4) break;
-                        j++;
-                        return;
-                }
-            }
-            element.innerHTML += text[i];
-            j = 0;
-            i++;
-        }
-        else {
-            clearInterval(interval);
-        }
-    }, delta);
-}
+// Align switch with current value
+document.getElementById('crtSwitch').checked = Settings.crtEffect.value;
+
+// Debug
+window.terminal = terminal;
+window.settings = Settings;
