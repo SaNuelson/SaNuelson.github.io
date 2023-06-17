@@ -1,9 +1,9 @@
-import { Processor } from "./Processor.js";
-export default class Console {
+import { Processor, GreeterProcessor } from "./Processor.js";
+export default class Terminal {
     constructor() {
         this.inputReceivedCallbacks = [];
         this.outputSentCallbacks = [];
-        this.processor = new Processor();
+        this.processor = GreeterProcessor;
         this.history = [];
         this.historyPtr = 0;
         this.historyCap = 50;
