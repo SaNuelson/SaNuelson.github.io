@@ -5,21 +5,62 @@ import Terminal from './Terminal.js';
  * Creates a binding between a Terminal model and its interface.
  */
 export default class TerminalView {
+    /** @type {Terminal} Underlying terminal manager */
+    terminal;
+
+    /** @type {HTMLInputElement} Input for this terminal view */
+    input;
+
+    /** @type {HTMLElement} HTML Element where terminal output is shown. */
+    output;
+
+    /** @type {Object} Custom object holding information regarding current output. */
+    #currentPrint;
+
+    /** @type {boolean} Flag whether view is enabled. If not, no events are sent. */
+    #enabled = false;
+    get enabled() {
+        return this.#enabled;
+    }
+    set enabled(value) {
+        if (this.#enabled === !!value)
+            return;
+
+        this.#enabled = value;
+    }
+
+    /** @type {boolean} Flag whether accepting input */
+    #expectsInput;
+    get expectsInput() {
+        return this.#expectsInput;
+    }
+    set expectsInput(value) {
+        console.log(this.#expectsInput, value);
+        if (this.#expectsInput === !!value)
+            return;
+        this.#expectsInput = !!value;
+        this.input.disabled = !value;
+    }
+
+    /** @type {EventDispatcher} Event triggered when output  */
+
     constructor(input, output) {
         this.terminal = new Terminal();
         this.input = input;
         this.output = output;
 
-        this.input.addEventListener('keydown', this.onInputKeyDown.bind(this));
-        this.terminal.onInputReceived(this.onTerminalInput.bind(this));
-        this.terminal.onOutputSent(this.onTerminalOutput.bind(this));
+        this.input.addEventListener('keydown', this.#onInputKeyDown.bind(this));
+        this.terminal.onInputReceived(this.#onTerminalInput.bind(this));
+        this.terminal.onOutputSent(this.#onTerminalOutput.bind(this));
 
-        this.currentPrint = null;
+        this.#currentPrint = null;
         this.printBegan = new EventDispatcher();
         this.printEnded = new EventDispatcher();
+
+        this.expectsInput = false;
     }
 
-    onInputKeyDown(e) {
+    #onInputKeyDown(e) {
         switch (e.key) {
             case 'Enter':
                 this.terminal.submit(e.target.value);
@@ -36,22 +77,22 @@ export default class TerminalView {
         }
     }
 
-    onTerminalInput(message) {
+    #onTerminalInput(message) {
         let p = document.createElement('p');
         p.innerHTML = '&gt;' + message;
         this.output.appendChild(p);
     }
 
-    onTerminalOutput(message) {
+    #onTerminalOutput(message) {
         let p = document.createElement('p');
         this.printOut(p, message, 50, true);
         this.output.appendChild(p);
     }
 
     printOut(element, text, delta, textAware = false) {
-        if (this.currentPrint !== null) {
-            clearInterval(this.currentPrint.interval);
-            this.currentPrint.target.innerHTML += this.currentPrint.content.slice(this.currentPrint.index);
+        if (this.#currentPrint !== null) {
+            clearInterval(this.#currentPrint.interval);
+            this.#currentPrint.target.innerHTML += this.#currentPrint.content.slice(this.#currentPrint.index);
             this.currentPrint = null;
         }
         let print = {

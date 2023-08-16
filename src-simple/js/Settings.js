@@ -12,18 +12,22 @@ export function init() {
     Settings.crtEffect.init();
 };
 
+/** Wrapper around settings option that can be potentially changed and can be saved into / loaded from local storage */
 class SettingsOption extends EventDispatcher {
-    /** @type {string} */
+    /** @type {string} Handle for option used in local storage */
     #name;
-    /** @type {any} */
+    /** @type {any} Value saved for option */
     #value;
-    /** @type {boolean} */
+    /** @type {boolean} Flag whether item is initialized, i.e., loaded from local storage */
     #isInit = false;
+    /** @type {boolean} Flag whether value should be saved and/or loaded from/to local storage */
+    #saved = true;
 
-    constructor(name, value) {
+    constructor(name, value, saved = true) {
         super();
         this.#name = name;
         this.#value = value;
+        this.#saved = saved;
     }
 
     init() {
@@ -33,9 +37,11 @@ class SettingsOption extends EventDispatcher {
         }
         
         this.#isInit = true;
-        if (localStorage.getItem(this.#name) !== null) {
+        if (this.#saved && localStorage.getItem(this.#name) !== null) {
             this.value = localStorage.getItem(this.#name) === 'true';
         }
+        
+        super.dispatchEvent(new CustomEvent('change', {detail: this}));
     }
 
     set value(value) {
@@ -48,7 +54,9 @@ class SettingsOption extends EventDispatcher {
         }
 
         this.#value = value;
-        localStorage.setItem(this.#name, this.#value);
+        if (this.#saved)  {
+            localStorage.setItem(this.#name, this.#value);
+        }
         super.dispatchEvent(new CustomEvent('change', {detail: this}));
     }
 
@@ -63,6 +71,7 @@ class SettingsOption extends EventDispatcher {
 
 // Settings singleton
 export const Settings = {
+    enabled: new SettingsOption('enabled', false, false),
     crtEffect: new SettingsOption('crtEffect', true),
     debug: new SettingsOption('debug', true),
     sound: new SettingsOption('sound', true),
