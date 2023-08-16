@@ -1,4 +1,5 @@
 import { default as GreeterData } from "../../json/Greeter.js";
+import { default as TestData } from "../../json/Test.js";
 import EventDispatcher from "../base/EventDispatcher.js";
 
 /**
@@ -20,17 +21,6 @@ import EventDispatcher from "../base/EventDispatcher.js";
 
 /** Class exlusively used as a wrapper for memory maintained by Processor and used by the commands. */
 class Memory {
-
-    #state = "start";
-    stateChanged = new EventDispatcher();
-    get state() { return this.#state; }
-    set state(newState) {
-        let hasStateChanged = this.#state !== newState;
-        this.#state = newState;
-        if (hasStateChanged) 
-            this.stateChanged.dispatchEvent(new CustomEvent('change', { detail: { state: newState } }));
-    }
-
     /**
      * Any and all variables created and checked by the commands. 
      * @type {Object.<string, any>} 
@@ -53,6 +43,28 @@ class Memory {
 
 export class Processor {
 
+    /** 
+     * Parent terminal 
+     * @type {import('./Terminal.js').default}
+     */
+    #terminal;
+
+    log(msg) {
+        this.#terminal.send(msg);
+    }
+
+    warn(msg) {
+        this.#terminal.send('<span style="color:yellow">' + msg + '</span>');
+    }
+
+    err(msg) {
+        this.#terminal.send('<span style="color:red">' + msg + '</span>');
+    }
+    
+    input() {
+        this.#terminal.
+    }
+
     /**
      *  List of (both public and secret) known commands.
      *  @type {Object.<string, Command>} 
@@ -65,15 +77,43 @@ export class Processor {
      */
     #memory = new Memory();
 
+    /**
+     * Get value for specified key, null if not present.
+     * @param {string} key Key to look for in memory
+     */
+    get(key) {
+        return this.#memory.getVar(key);
+    }
+
+    /**
+     * Set value for specified key, overwriting any existing value.
+     * @param {string} key Key to look for in memory
+     * @param {any} value Value to set key to
+     */
+    set(key, value) {
+        return this.#memory.setVar(key, value);
+    }
+
+    /**
+     * Check if key is known within memory.
+     * @param {string} key Key to look for in memory
+     */
+    has(key) {
+        return this.#memory.getVar(key) !== null;
+    }
+
     /** 
      * Create a new processor using a template.
+     * @param {import('./Terminal.js').default} terminal
      * @param {ProcessorData} processorData 
      */
-    constructor(processorData) {
+    constructor(terminal, processorData) {
+        this.#terminal = terminal;
+
         if (processorData?.commands?.length > 0) 
         {
             for (const command of processorData.commands) {
-                this.#commands[command.name] = new Command(command.name, command.response, command.condition, command.attributes);
+                this.#commands[command.name] = new Command(command.name, command.response, command.description);
             }
         }
 
@@ -82,7 +122,7 @@ export class Processor {
         this.#commands["help"] = new Command(
             "help",
             function() {
-                let knownCommands = Object.values(cmdsView).filter(cmd => !cmd.attributes?.secret);
+                let knownCommands = Object.values(cmdsView).filter(cmd => cmd.description);
                 if (knownCommands.length < 1) {
                     return "There are no known commands. Either none are implemented or they are too secret to show here.";
                 }
@@ -102,7 +142,7 @@ export class Processor {
      */
     process(message) {
         if (this.#commands[message]) {
-            return this.#commands[message].run(this.#memory, message);
+            return this.#commands[message].run(this, message);
         }
         return `Unknown command: '${message}'. Type 'help' for a list of commands.`;
     }
@@ -112,15 +152,13 @@ class Command {
     /**
      * 
      * @param {string} handle 
-     * @param {Array.<ExprData>} response 
-     * @param {Array.<ExprData>} condition 
-     * @param {Object.<string, any>} attributes 
+     * @param {Array.<ExprData>} response
+     * @param {string} description 
      */
-    constructor(handle, response, condition, attributes) {
+    constructor(handle, response, description) {
         this.handle = handle;
-        this.condition = condition;
         this.response = response;
-        this.attributes = attributes;
+        this.description = description;
     }
 
     /**
@@ -129,23 +167,13 @@ class Command {
      * @returns {string}
      */
     run(memory, ...args) {
-        if (!this.condition || this.condition(memory, ...args)) {
-            return this.response(memory, ...args);
-        }
-    }
-
-    #runCondition(memory,...args) {
-        
-    }
-
-    #runResponse(memory,...args) {
-
+        return this.response(memory, ...args);
     }
 
     toString() {
-        if (this.attributes && this.attributes.tooltip)
+        if (this.description)
         {
-            return `${this.handle} - ${this.attributes.tooltip}`;
+            return `${this.handle} - ${this.description}`;
         }
         else
         {
@@ -154,4 +182,4 @@ class Command {
     }
 }
 
-export const GreeterProcessor = new Processor(GreeterData);
+export const getGreeter = (terminal) => new Processor(terminal, TestData);

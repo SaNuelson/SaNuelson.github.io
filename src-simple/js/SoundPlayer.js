@@ -41,8 +41,11 @@ let lastBeepLoopFinishedAt;
 function onOutputMutationObserved(mutations) {
     if (lastBeepLoopFinishedAt === undefined || Date.now() + Random.uniform(0, beepJitter) > lastBeepLoopFinishedAt) {
         let selectedBeep = beeps[Math.floor(Math.random() * beeps.length)];
-        selectedBeep.play();
+        let playSuccess = selectedBeep.play();
+        if (playSuccess !== undefined) {
+            playSuccess.catch(e=>console.log(e));
+        }
         lastBeepLoopFinishedAt = Date.now() + selectedBeep.duration * 1000;
-        console.log(`beep: last finished ${lastBeepLoopFinishedAt}, now ${Date.now()} + ${selectedBeep.duration * 1000}`);
+        // console.log(`beep: last finished ${lastBeepLoopFinishedAt}, now ${Date.now()} + ${selectedBeep.duration * 1000}`);
     }
 }

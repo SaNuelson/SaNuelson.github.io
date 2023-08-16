@@ -1,9 +1,11 @@
-import { Processor, GreeterProcessor } from "./Processor.js";
+import { Processor, getGreeter } from "./Processor.js";
+
 export default class Terminal {
     constructor() {
         this.inputReceivedCallbacks = [];
         this.outputSentCallbacks = [];
-        this.processor = GreeterProcessor;
+        this.processor = getGreeter(this);
+        this.processor.terminal = this;
         this.history = [];
         this.historyPtr = 0;
         this.historyCap = 50;
@@ -35,13 +37,28 @@ export default class Terminal {
         return this.history[this.historyPtr];
     }
 
-    submit(message) {
+    receive(message) {
         this.history.push(message);
         this.historyPtr = this.history.length;
         if (this.history.length > this.historyCap)
             this.history.shift();
 
         this.inputReceivedCallbacks.forEach(callback => callback(message));
+    }
+
+    send(message) {
+        this.outputSentCallbacks.forEach(callback => callback(message));
+    }
+    
+    submit(message) {
+        if (message !== null) {
+            this.history.push(message);
+            this.historyPtr = this.history.length;
+            if (this.history.length > this.historyCap)
+                this.history.shift();
+            this.inputReceivedCallbacks.forEach(callback => callback(message));
+        }
+
         let result = this.processor.process(message);
         this.outputSentCallbacks.forEach(callback => callback(result));
     }
