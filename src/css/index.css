@@ -1,0 +1,119 @@
+:root {
+    --bg-outer-dark: #364146;
+    --bg-outer-light: #455258;
+    --bg-outer-lighter: #6c7f88;
+    --bg-black: #111813;
+    --bg-dark: #083a1d;
+    --bg-light: #197929;
+    --fg-default: #2ea55f;
+    --body-margin: 1em;
+}
+
+@font-face {
+    font-family: vcrosd;
+    src: url('../ttf/VCR_OSD_MONO.ttf');
+}
+
+@font-face {
+    font-family: homespun;
+    src: url('../ttf/homespun.ttf');
+}
+
+body {
+    background-color: var(--bg-outer-dark);
+    width: calc(100vw - 2 * var(--body-margin));
+    height: calc(100vh - 2 * var(--body-margin));
+    overflow: hidden;
+    margin: 0;
+    padding: var(--body-margin);
+}
+
+.wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.wrapper.outer {
+    background: linear-gradient(45deg, var(--bg-outer-light), var(--bg-outer-lighter));
+    border-radius: 30px 30px 0 0;
+    padding: var(--body-margin);
+}
+
+.console {
+    height: calc(100% - 2em);
+    width: calc(100% - 2em);
+    padding: 1em;
+    background-color: var(--bg-dark);
+    display: flex;
+    flex-direction: column;
+
+    color: var(--fg-default);
+    font-size: 1.5em;
+    font-family: vcrosd, monospace;
+    caret-shape: block;
+    letter-spacing: 0.1em;
+}
+
+.console,
+.console::before,
+.console::after {
+    border-radius: 1em;
+}
+
+.console .log {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+
+    height: 100%;
+    width: 100%;
+}
+
+.console .entry {
+    display: flex;
+}
+
+.console p {
+    margin: 0;
+    mask: url(#mask-1);
+}
+
+.console .input {
+    all: inherit;
+    width: 100%;
+}
+
+.console p,
+.console .input,
+.console .arrow {
+    margin-top: 0.1em;
+}
+
+.console .input:focus {
+    outline: none;
+}
+
+.settings {
+    height: 8em;
+    background-color: var(--bg-outer-dark);
+    margin-top: var(--body-margin);
+    margin: 0.5em -0.5em 0 -0.5em;
+    border-radius: 2em 2em 0 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.settings-switch {
+    font-family: homespun;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.settings-switch .switch-label {
+    padding-bottom: 0.5em;
+}
