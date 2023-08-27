@@ -1,3 +1,4 @@
+import EventDispatcher from '../base/EventDispatcher';
 import Terminal from './Terminal';
 
 type PrintInfo = {
@@ -10,7 +11,7 @@ type PrintInfo = {
 /**
  * Creates a binding between a Terminal model and its interface.
  */
-export default class TerminalView {
+export default class TerminalView extends EventDispatcher {
     terminal: Terminal;
 
     /** Input for this terminal view */
@@ -47,7 +48,9 @@ export default class TerminalView {
     /** @type {EventDispatcher} Event triggered when output  */
 
     constructor(input: HTMLInputElement, output: HTMLElement) {
-        this.terminal = new Terminal();
+        super();
+
+        this.terminal = new Terminal(this);
         this.input = input;
         this.output = output;
 
@@ -79,25 +82,28 @@ export default class TerminalView {
     }
 
     private onTerminalInput(event: Event): void {
-        const message = (event as CustomEvent).detail.message;
+        const message = (event as CustomEvent).detail;
         const p = document.createElement('p');
-        p.innerHTML = '&gt;' + message;
+        p.innerHTML = `&gt;${message}`;
         this.output.appendChild(p);
     }
 
     private onTerminalOutput(event: Event): void {
-        const message = (event as CustomEvent).detail.message;
+        const message = (event as CustomEvent).detail;
         const p = document.createElement('p');
         this.printOut(p, message, 50, true);
         this.output.appendChild(p);
     }
 
     printOut(element: HTMLElement, text: string, delta: number, textAware: boolean = false) {
+        console.trace('printOut', element, text, delta, textAware);
         if (this._currentPrint !== null) {
+            console.warn('Printout flushed', this._currentPrint);
             clearInterval(this._currentPrint.interval);
             this._currentPrint.target.innerHTML += this._currentPrint.content.slice(this._currentPrint.index);
             this._currentPrint = null;
         }
+
         this._currentPrint = {
             target: element,
             content: text,
@@ -155,6 +161,7 @@ export default class TerminalView {
             } else {
                 clearInterval(interval);
                 this._currentPrint = null;
+                this.dispatchEvent(new CustomEvent('printDone', { detail: text }));
             }
         }, delta);
         this._currentPrint.interval = interval;
