@@ -1,5 +1,5 @@
 import EventDispatcher from '../base/EventDispatcher';
-import { Template } from './templates/Template';
+import { CommandResponse, Template } from './templates/Template';
 
 /** Class exlusively used as a wrapper for memory maintained by Processor and used by the commands. */
 class Memory {
@@ -29,12 +29,12 @@ export class Context {
 
     private processor: Processor;
 
-    out(message: string): void {
-        this.processor.out(message);
+    async out(message: string): Promise<void> {
+        await this.processor.out(message);
     }
 
-    in(message?: string): string {
-        return this.processor.in(message);
+    async in(message?: string): Promise<string> {
+        return await this.processor.in(message);
     }
 
     private memory: Memory;
@@ -53,22 +53,22 @@ export class Context {
 }
 
 export interface ITerminal {
-    write(text: string): void;
-    read(): string;
+    write(text: string): Promise<void>;
+    read(): Promise<string>;
 }
 
 export class Processor {
     private terminal: ITerminal;
 
-    out(message: string): void {
-        this.terminal.write(message);
+    async out(message: string): Promise<void> {
+        await this.terminal.write(message);
     }
 
-    in(message: string | undefined): string {
+    async in(message: string | undefined): Promise<string> {
         if (message !== undefined) {
             this.terminal.write(message);
         }
-        return this.terminal.read();
+        return await this.terminal.read();
     }
 
     private commands: { [handle: string]: Command } = {};
@@ -100,14 +100,16 @@ export class Processor {
         const cmdsView = this.commands;
         this.commands.help = new Command(
             'help',
-            (ctx: Context) => {
+            async (ctx: Context) => {
                 const knownCommands = Object.values(cmdsView).filter((cmd) => cmd.description);
                 if (knownCommands.length < 1) {
                     ctx.out(
                         'There are no known commands. Either none are implemented or they are too secret to show here.'
                     );
                 } else {
-                    knownCommands.forEach((cmd) => `- ${ctx.out(cmd.toString())}`);
+                    for (const cmd of knownCommands) {
+                        await ctx.out(`- ${cmd.toString()}`);
+                    }
                 }
                 return true;
             },
@@ -138,20 +140,16 @@ export class Processor {
 
 class Command {
     handle: string | null;
-    response: (ctx: Context, ...args: any[]) => boolean;
+    response: CommandResponse;
     description: string | null;
 
-    constructor(
-        handle: string | null,
-        response: (ctx: Context, ...args: any[]) => boolean,
-        description: string | null
-    ) {
+    constructor(handle: string | null, response: CommandResponse, description: string | null) {
         this.handle = handle;
         this.response = response;
         this.description = description;
     }
 
-    run(ctx: Context, ...args: any[]): boolean {
+    run(ctx: Context, ...args: any[]): Promise<boolean> {
         return this.response(ctx, ...args);
     }
 

@@ -1,16 +1,19 @@
 import EventDispatcher from '../base/EventDispatcher';
 import { Processor } from './Processor';
+import TerminalView from './TerminalView';
 import { default as Greeter } from './templates/Greeter';
 
 export default class Terminal extends EventDispatcher {
     private processor: Processor;
+    private view: TerminalView;
 
     private history: string[] = [];
     private historyPtr: number = 0;
     private historyCap: number = 50;
 
-    constructor() {
+    constructor(view: TerminalView) {
         super();
+        this.view = view;
         this.processor = new Processor(this, Greeter);
     }
 
@@ -47,22 +50,23 @@ export default class Terminal extends EventDispatcher {
             this.history.push(message);
             this.historyPtr = this.history.length;
             if (this.history.length > this.historyCap) this.history.shift();
-            this.dispatchEvent(new CustomEvent('output', { detail: message }));
+            this.dispatchEvent(new CustomEvent('input', { detail: message }));
         }
 
-        const result = this.processor.process(message);
-        this.dispatchEvent(new CustomEvent('input', { detail: result }));
+        this.processor.process(message);
     }
 
     start(): void {
         this.processor.process();
     }
 
-    write(text: string): void {
+    async write(text: string): Promise<void> {
+        console.log('Terminal write', text);
         this.dispatchEvent(new CustomEvent('output', { detail: text }));
+        return new Promise((resolve) => this.view.addEventListener('printDone', () => resolve()));
     }
 
-    read(): string {
+    async read(): Promise<string> {
         return 'TODO';
     }
 }

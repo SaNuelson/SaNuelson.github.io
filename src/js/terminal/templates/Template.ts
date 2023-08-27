@@ -1,6 +1,6 @@
 import { Context } from '../Processor';
 
-export type CommandResponse = (app: Context, ...args: any[]) => boolean;
+export type CommandResponse = (app: Context, ...args: any[]) => Promise<boolean>;
 
 export type MemoryTemplate = { [key: string]: any };
 
