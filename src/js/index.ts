@@ -26,6 +26,7 @@ document
 
 /// *** ENABLE *** ///
 Settings.enabled.addEventListener(() => (termView.enabled = Settings.enabled.value));
+Settings.enabled.addEventListener((e) => consoleScreen.classList.toggle('enabled', Settings.enabled.value));
 document
     .getElementById('mainSwitch')
     ?.addEventListener('change', (e) => (Settings.enabled.value = (e.target as HTMLInputElement).checked));

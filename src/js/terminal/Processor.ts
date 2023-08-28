@@ -101,7 +101,7 @@ export class Processor {
         this.commands.help = new Command(
             'help',
             async (ctx: Context) => {
-                const knownCommands = Object.values(cmdsView).filter((cmd) => cmd.description);
+                const knownCommands = Object.values(cmdsView).filter((cmd) => cmd.handle);
                 if (knownCommands.length < 1) {
                     ctx.out(
                         'There are no known commands. Either none are implemented or they are too secret to show here.'
@@ -157,7 +157,7 @@ class Command {
         if (this.description) {
             return `${this.handle} - ${this.description}`;
         } else {
-            return `${this.handle}`;
+            return `${this.handle} - ???`;
         }
     }
 }
