@@ -4,6 +4,7 @@ import Terminal from './Terminal';
 type PrintInfo = {
     target: HTMLElement;
     content: string;
+    delta: number;
     index: number;
     interval: NodeJS.Timeout | undefined;
 };
@@ -21,7 +22,7 @@ export default class TerminalView extends EventDispatcher {
     output: HTMLElement;
 
     /** Custom object holding information regarding current output. */
-    private _currentPrint: PrintInfo | null;
+    private printStack: PrintInfo[] = [];
 
     /** Flag whether view is enabled. If not, no events are sent. */
     private _enabled: boolean = false;
@@ -58,7 +59,6 @@ export default class TerminalView extends EventDispatcher {
         this.terminal.addEventListener('input', this.onTerminalInput.bind(this));
         this.terminal.addEventListener('output', this.onTerminalOutput.bind(this));
 
-        this._currentPrint = null;
         this.expectsInput = false;
     }
 
@@ -84,7 +84,7 @@ export default class TerminalView extends EventDispatcher {
     private onTerminalInput(event: Event): void {
         const message = (event as CustomEvent).detail;
         const p = document.createElement('p');
-        p.innerHTML = `&gt;${message}`;
+        this.printOut(p, `>${message}`, 0, false, true);
         this.output.appendChild(p);
     }
 
@@ -95,36 +95,75 @@ export default class TerminalView extends EventDispatcher {
         this.output.appendChild(p);
     }
 
-    printOut(element: HTMLElement, text: string, delta: number, textAware: boolean = false) {
-        console.trace('printOut', element, text, delta, textAware);
-        if (this._currentPrint !== null) {
-            console.warn('Printout flushed', this._currentPrint);
-            clearInterval(this._currentPrint.interval);
-            this._currentPrint.target.innerHTML += this._currentPrint.content.slice(this._currentPrint.index);
-            this._currentPrint = null;
+    parseRichTest(text: string): string[] {
+        let parsed: string[] = [];
+        while (text.length > 0) {
+            if (text[0] === '<') {
+                let endIdx = text.indexOf('>', 1);
+                parsed.push(text.slice(0, endIdx));
+                text = text.slice(endIdx + 1);
+            } else {
+                parsed.push(text[0]);
+                text = text.slice(1);
+            }
         }
+        return parsed;
+    }
 
-        this._currentPrint = {
-            target: element,
-            content: text,
-            index: 0,
-            interval: undefined,
-        };
-
+    /**
+     * Enqueue a printing order for a message in the terminal view.
+     * @param element HTML element (i.e., p) in which to print the message.
+     * @param text Text to print.
+     * @param delta Time in milliseconds between printing each character.
+     * @param textAware If true, commas and dots will be printed with a delay (2 and 4 times the delta respectively), as to simulate speech.
+     * @param flush If true, any currently enqueued messages will be printed immediately.
+     */
+    printOut(
+        element: HTMLElement,
+        text: string,
+        delta: number,
+        textAware: boolean = false,
+        flush: boolean = false
+    ): void {
         // Fault check
-        if (text === null || text === undefined) {
+        if (text == null) {
             console.trace('printOut text = ' + text);
             text = '';
         }
 
+        if (flush) {
+            while (this.printStack.length > 0) {
+                let printInfo = this.printStack.shift() as PrintInfo;
+                clearInterval(printInfo.interval);
+                printInfo.target.innerText = printInfo.content;
+            }
+        }
+
+        let printInfo: PrintInfo = {
+            target: element,
+            content: text,
+            delta: delta,
+            index: 0,
+            interval: undefined,
+        };
+        this.printStack.push(printInfo);
+
+        // Helper counter to handle text-aware delays in special characters.
         let delay = 0;
+
         let interval = setInterval(() => {
-            if (!this._currentPrint) {
+            let order = this.printStack.indexOf(printInfo);
+            if (order === -1) {
+                console.trace('printOut entry not in queue', printInfo);
+                clearInterval(interval);
+                return;
+            } else if (order > 0) {
+                // Not first in line, wait
                 return;
             }
 
-            if (this._currentPrint.index < text.length) {
-                let char = text[this._currentPrint.index];
+            if (printInfo.index < text.length) {
+                let char = text[printInfo.index];
 
                 // replace html-conflicting chars
                 if (char === '<') char = '&lt;';
@@ -157,13 +196,13 @@ export default class TerminalView extends EventDispatcher {
                 }
                 element.innerHTML += char;
                 delay = 0;
-                this._currentPrint.index++;
+                printInfo.index++;
             } else {
                 clearInterval(interval);
-                this._currentPrint = null;
-                this.dispatchEvent(new CustomEvent('printDone', { detail: text }));
+                let finishedPrint = this.printStack.shift();
+                this.dispatchEvent(new CustomEvent('printDone', { detail: finishedPrint }));
             }
         }, delta);
-        this._currentPrint.interval = interval;
+        printInfo.interval = interval;
     }
 }
