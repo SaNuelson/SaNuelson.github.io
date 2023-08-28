@@ -44,7 +44,6 @@ body {
     height: calc(100% - 2em);
     width: calc(100% - 2em);
     padding: 1em;
-    background-color: var(--bg-dark);
     display: flex;
     flex-direction: column;
 
@@ -53,6 +52,26 @@ body {
     font-family: vcrosd, monospace;
     caret-shape: block;
     letter-spacing: 0.1em;
+
+    background-color: var(--bg-black);
+}
+
+.console:not(.enabled) * {
+    visibility: hidden;
+}
+
+@keyframes enableAnimation {
+    from {
+        background-color: var(--bg-black);
+    }
+    to {
+        background-color: var(--bg-dark);
+    }
+}
+
+.console.enabled {
+    background-color: var(--bg-dark);
+    animation: enableAnimation 4s linear normal;
 }
 
 .console,

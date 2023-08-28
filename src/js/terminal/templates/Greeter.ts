@@ -23,6 +23,15 @@ const Greeter: Template = {
             },
         },
         {
+            name: 'repeat',
+            response: async (app) => {
+                await app.out('Ok, I will repeat what you said.');
+                let input = await app.in();
+                await app.out(input);
+                return true;
+            },
+        },
+        {
             name: 'hello',
             description: 'Nothing but a simple greeting.',
             response: async (app, name: string) => {
