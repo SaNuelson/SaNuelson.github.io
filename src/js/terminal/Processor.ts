@@ -118,10 +118,10 @@ export class Processor {
     }
 
     /** Process an incoming message and provide a response. */
-    process(message?: string): void {
+    async process(message?: string): Promise<void> {
         if (!message) {
             if (this.default) {
-                this.default.run(this.context);
+                await this.default.run(this.context);
             }
             return;
         }
@@ -130,10 +130,10 @@ export class Processor {
         const cmd = words[0] ?? '';
         const args = words.slice(1);
         if (this.commands[cmd ?? 'null']) {
-            this.commands[cmd ?? 'null'].run(this.context, ...args);
+            await this.commands[cmd ?? 'null'].run(this.context, ...args);
         } else {
             // TODO: Delegate to commands (i.e. for custom UNK CMD message)
-            this.out(`Unknown command: '${cmd}'. Type 'help' for a list of commands.`);
+            await this.out(`Unknown command: '${cmd}'. Type 'help' for a list of commands.`);
         }
     }
 }

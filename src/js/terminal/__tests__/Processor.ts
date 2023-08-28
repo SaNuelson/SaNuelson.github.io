@@ -1,5 +1,5 @@
 import { Processor, ITerminal } from '../Processor';
-import { jest, describe, it } from '@jest/globals';
+import { jest, describe, it, beforeEach, expect } from '@jest/globals';
 import { Template } from '../templates/Template';
 import { Mocked } from 'jest-mock';
 
@@ -11,10 +11,11 @@ beforeEach(() => {
     outputStream = [];
     inputStream = [];
     terminal = {
-        write: jest.fn((msg: string) => {
+        write: jest.fn((msg: string): Promise<void> => {
             outputStream.push(msg);
+            return Promise.resolve();
         }),
-        read: jest.fn(() => inputStream.shift() ?? ''),
+        read: jest.fn((): Promise<string> => new Promise((r) => r(inputStream.shift() ?? ''))),
     };
 });
 
@@ -30,7 +31,7 @@ describe('Processor', () => {
             commands: [
                 {
                     name: null,
-                    response: (ctx) => {
+                    response: async (ctx) => {
                         ctx.out('non-default');
                         return true;
                     },
@@ -38,7 +39,7 @@ describe('Processor', () => {
                 {
                     name: null,
                     default: true,
-                    response: (ctx) => {
+                    response: async (ctx) => {
                         ctx.out('default');
                         return true;
                     },
@@ -54,13 +55,13 @@ describe('Processor', () => {
         expect(outputStream[0]).toEqual('default');
     });
 
-    it('should propagate output calls', () => {
+    it('should propagate output calls', async () => {
         let template: Template = {
             memory: {},
             commands: [
                 {
                     name: 'out',
-                    response: (ctx) => {
+                    response: async (ctx) => {
                         ctx.out('test');
                         return true;
                     },
@@ -70,13 +71,13 @@ describe('Processor', () => {
 
         const processor = new Processor(terminal, template);
 
-        processor.process('out');
+        await processor.process('out');
         expect(terminal.write).toBeCalledTimes(1);
         expect(outputStream).toHaveLength(1);
         expect(outputStream[0]).toEqual('test');
     });
 
-    it('should propagate input calls', () => {
+    it('should propagate input calls', async () => {
         inputStream.push('a');
         inputStream.push('b');
         let template: Template = {
@@ -84,9 +85,9 @@ describe('Processor', () => {
             commands: [
                 {
                     name: 'in',
-                    response: (ctx) => {
-                        let input = ctx.in();
-                        ctx.out(input);
+                    response: async (ctx) => {
+                        let input = await ctx.in();
+                        await ctx.out(input);
                         return true;
                     },
                 },
@@ -95,8 +96,8 @@ describe('Processor', () => {
 
         const processor = new Processor(terminal, template);
 
-        processor.process('in');
-        processor.process('in');
+        await processor.process('in');
+        await processor.process('in');
 
         expect(terminal.read).toBeCalledTimes(2);
         expect(terminal.write).toBeCalledTimes(2);
@@ -106,13 +107,13 @@ describe('Processor', () => {
         expect(outputStream[1]).toEqual('b');
     });
 
-    it('should pass arguments', () => {
+    it('should pass arguments', async () => {
         let template: Template = {
             memory: {},
             commands: [
                 {
                     name: 'arg',
-                    response: (ctx, arg) => {
+                    response: async (ctx, arg) => {
                         ctx.out(arg);
                         return true;
                     },

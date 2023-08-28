@@ -25,8 +25,14 @@ document
     ?.addEventListener('change', (e) => (Settings.crtEffect.value = (e.target as HTMLInputElement).checked));
 
 /// *** ENABLE *** ///
+let firstStarted = false;
 Settings.enabled.addEventListener(() => (termView.enabled = Settings.enabled.value));
-Settings.enabled.addEventListener((e) => consoleScreen.classList.toggle('enabled', Settings.enabled.value));
+Settings.enabled.addEventListener(() => {
+    if (firstStarted) return;
+    firstStarted = true;
+    termView.terminal.start();
+});
+Settings.enabled.addEventListener(() => consoleScreen.classList.toggle('enabled', Settings.enabled.value));
 document
     .getElementById('mainSwitch')
     ?.addEventListener('change', (e) => (Settings.enabled.value = (e.target as HTMLInputElement).checked));
@@ -35,5 +41,3 @@ initSettings();
 
 // Align switch with current value
 (document.getElementById('crtSwitch') as HTMLInputElement).checked = Settings.crtEffect.value;
-
-termView.terminal.start();

@@ -1,4 +1,3 @@
-import { Context } from '../Processor';
 import { Template } from './Template';
 
 const Greeter: Template = {
@@ -8,7 +7,7 @@ const Greeter: Template = {
             name: null,
             default: true,
             response: async (app) => {
-                await app.out('Welcome to the terminal test. This is test state-machine speaking.');
+                await app.out("Welcome to the terminimal! If you're not sure how to continue, send help.");
                 return true;
             },
         },
