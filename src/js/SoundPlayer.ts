@@ -1,6 +1,6 @@
 import { Random } from './base/Random';
 
-const clicksPath = '/src/mp3/keyclicks/';
+const clicksPath = '/public/mp3/keyclicks/';
 const clicksFilenames = [
     '1.wav',
     '2.wav',
@@ -23,7 +23,7 @@ consoleInput.onkeydown = function (e) {
     clicks[Math.floor(Math.random() * clicks.length)].play();
 };
 
-const beepsPath = '/src/mp3/beeps/';
+const beepsPath = '/public/mp3/beeps/';
 const beepsFilenames = ['1.wav', '2.wav', '3.wav', '4.wav', '5.wav', '6.wav', '7.wav'];
 const beeps = beepsFilenames.map((name) => new Audio(`${beepsPath}${name}`));
 
