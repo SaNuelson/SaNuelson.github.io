@@ -11,6 +11,8 @@ export default class Terminal extends EventDispatcher {
     private historyPtr: number = 0;
     private historyCap: number = 50;
 
+    private overrideInputFlow: boolean = false;
+
     constructor(view: TerminalView) {
         super();
         this.view = view;
@@ -42,6 +44,7 @@ export default class Terminal extends EventDispatcher {
     }
 
     input(message: string): void {
+        console.trace('input');
         this.dispatchEvent(new CustomEvent('input', { detail: message }));
     }
 
@@ -53,20 +56,40 @@ export default class Terminal extends EventDispatcher {
             this.dispatchEvent(new CustomEvent('input', { detail: message }));
         }
 
+        if (this.overrideInputFlow) {
+            this.overrideInputFlow = false;
+            return;
+        }
+
         this.processor.process(message);
     }
 
     start(): void {
+        if (this.overrideInputFlow) {
+            this.overrideInputFlow = false;
+            return;
+        }
+
         this.processor.process();
     }
 
     async write(text: string): Promise<void> {
         console.log('Terminal write', text);
-        this.dispatchEvent(new CustomEvent('output', { detail: text }));
-        return new Promise((resolve) => this.view.addEventListener('printDone', () => resolve()));
+        this.dispatchEvent(new CustomEvent('output', { detail: text.toString() }));
+        return new Promise((resolve) => this.view.addEventListener('printDone', () => resolve(), true));
     }
 
     async read(): Promise<string> {
-        return 'TODO';
+        console.log('Terminal read');
+        this.overrideInputFlow = true;
+        return new Promise((resolve) =>
+            this.addEventListener(
+                'input',
+                (e) => {
+                    return resolve((e as CustomEvent).detail);
+                },
+                true
+            )
+        );
     }
 }
