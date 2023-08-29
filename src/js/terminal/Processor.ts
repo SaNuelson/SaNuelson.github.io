@@ -66,9 +66,9 @@ export class Processor {
 
     async in(message: string | undefined): Promise<string> {
         if (message !== undefined) {
-            this.terminal.write(message);
+            await this.terminal.write(message);
         }
-        return await this.terminal.read();
+        return this.terminal.read();
     }
 
     private commands: { [handle: string]: Command } = {};
