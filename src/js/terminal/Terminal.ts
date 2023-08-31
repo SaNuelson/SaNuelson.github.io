@@ -76,7 +76,18 @@ export default class Terminal extends EventDispatcher {
     async write(text: string): Promise<void> {
         console.log('Terminal write', text);
         this.dispatchEvent(new CustomEvent('output', { detail: text.toString() }));
-        return new Promise((resolve) => this.view.addEventListener('printDone', () => resolve(), true));
+
+        return new Promise((resolve) => {
+            const printDoneHandler = (e: Event) => {
+                let printedText: string = (e as CustomEvent).detail;
+                if (printedText === text) {
+                    this.view.removeEventListener('printDone', printDoneHandler);
+                    resolve();
+                }
+            };
+
+            this.view.addEventListener('printDone', printDoneHandler);
+        });
     }
 
     async read(): Promise<string> {
