@@ -1,9 +1,11 @@
 import EventDispatcher from '../base/EventDispatcher';
+import { sanitizeHtml, splitHtml } from '../base/Util';
 import Terminal from './Terminal';
 
 type PrintInfo = {
     target: HTMLElement;
-    content: string;
+    originalText: string;
+    content: string[];
     delta: number;
     index: number;
     interval: NodeJS.Timeout | undefined;
@@ -91,23 +93,8 @@ export default class TerminalView extends EventDispatcher {
     private onTerminalOutput(event: Event): void {
         const message = (event as CustomEvent).detail;
         const p = document.createElement('p');
-        this.printOut(p, message, 50, true);
+        this.printOut(p, message, 20, true);
         this.output.appendChild(p);
-    }
-
-    parseRichTest(text: string): string[] {
-        let parsed: string[] = [];
-        while (text.length > 0) {
-            if (text[0] === '<') {
-                let endIdx = text.indexOf('>', 1);
-                parsed.push(text.slice(0, endIdx));
-                text = text.slice(endIdx + 1);
-            } else {
-                parsed.push(text[0]);
-                text = text.slice(1);
-            }
-        }
-        return parsed;
     }
 
     /**
@@ -127,7 +114,7 @@ export default class TerminalView extends EventDispatcher {
     ): void {
         // Fault check
         if (text == null) {
-            console.trace('printOut text = ' + text);
+            console.trace(`printOut text = ${text}`);
             text = '';
         }
 
@@ -135,13 +122,14 @@ export default class TerminalView extends EventDispatcher {
             while (this.printStack.length > 0) {
                 let printInfo = this.printStack.shift() as PrintInfo;
                 clearInterval(printInfo.interval);
-                printInfo.target.innerText = printInfo.content;
+                printInfo.target.innerHTML = printInfo.content.join('');
             }
         }
 
         let printInfo: PrintInfo = {
             target: element,
-            content: text,
+            originalText: text,
+            content: splitHtml(text).map((c) => (c.length === 1 ? sanitizeHtml(c) : c)),
             delta: delta,
             index: 0,
             interval: undefined,
@@ -162,26 +150,8 @@ export default class TerminalView extends EventDispatcher {
                 return;
             }
 
-            if (printInfo.index < text.length) {
-                let char = text[printInfo.index];
-
-                // replace html-conflicting chars
-                if (char === '<') char = '&lt;';
-                else if (char === '>') char = '&gt;';
-                else if (char === '&') char = '&amp;';
-                else if (char === '"') char = '&quot;';
-                else if (char === "'") char = '&#39;';
-                else if (char === '`') char = '&#96;';
-                else if (char === '\n') char = '<br />';
-                else if (char === '\r') char = '<br />';
-                else if (char === '\t') char = '&nbsp;&nbsp;&nbsp;&nbsp;';
-                else if (char === '\b') char = '&nbsp;&nbsp;&nbsp;';
-                else if (char === '\f') char = '&nbsp;';
-                else if (char === '\v') char = '&nbsp;&nbsp;';
-                else if (char === '\u00A0') char = '&nbsp;';
-                else if (char === '\u2028') char = '&nbsp;';
-                else if (char === '\u2029') char = '&nbsp;';
-
+            if (printInfo.index < printInfo.content.length) {
+                const char = printInfo.content[printInfo.index];
                 if (textAware) {
                     switch (char) {
                         case ',':
@@ -194,13 +164,13 @@ export default class TerminalView extends EventDispatcher {
                             return;
                     }
                 }
-                element.innerHTML += char;
+                element.innerHTML = printInfo.content.slice(0, printInfo.index + 1).join('');
                 delay = 0;
                 printInfo.index++;
             } else {
                 clearInterval(interval);
                 let finishedPrint = this.printStack.shift();
-                this.dispatchEvent(new CustomEvent('printDone', { detail: finishedPrint }));
+                this.dispatchEvent(new CustomEvent('printDone', { detail: printInfo.originalText }));
             }
         }, delta);
         printInfo.interval = interval;

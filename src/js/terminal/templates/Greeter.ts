@@ -15,11 +15,11 @@ const Greeter: Template = {
             name: 'talk',
             description: 'Let the terminal ramble',
             response: async (app) => {
-                await app.out("Hello, I'm the terminimal.");
-                await app.out("I'm running using JS (though written in TS and later tranlated).");
-                await app.out("Some day in the near future, I'll hopefully become a portfolio page.");
-                await app.out("Undoubtedly though, I'll contain some games and easter eggs too tho.");
-                await app.out("Yeah, that's probably everything about me. For now... ;)");
+                app.out('Hello, I\'m the <span style="color:cyan">Termie</span>, the terminimal.');
+                app.out("I'm running using JS (though written in TS and later tranlated).");
+                app.out("Some day in the near future, I'll hopefully become a portfolio page.");
+                app.out("Undoubtedly though, I'll contain some games and easter eggs too tho.");
+                app.out("Yeah, that's probably everything about me. For now... ;)");
                 return true;
             },
         },
