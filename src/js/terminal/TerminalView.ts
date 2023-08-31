@@ -167,9 +167,10 @@ export default class TerminalView extends EventDispatcher {
                 element.innerHTML = printInfo.content.slice(0, printInfo.index + 1).join('');
                 delay = 0;
                 printInfo.index++;
+                this.dispatchEvent(new CustomEvent('printChar', { detail: char }));
             } else {
                 clearInterval(interval);
-                let finishedPrint = this.printStack.shift();
+                this.printStack.shift();
                 this.dispatchEvent(new CustomEvent('printDone', { detail: printInfo.originalText }));
             }
         }, delta);
