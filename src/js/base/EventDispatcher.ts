@@ -11,6 +11,22 @@ export default class EventDispatcher {
 
     constructor() {}
 
+    addOneShotListener(type: string, listener: Callback): void;
+    addOneShotListener(listener: Callback): void;
+    addOneShotListener(a: string | Callback, b?: Callback): void {
+        if (b) {
+            if (typeof a !== 'string') {
+                throw new Error('Event type must be a string');
+            }
+            this.addEventListener(a, b, true);
+        } else {
+            if (typeof a !== 'function') {
+                throw new Error('Listener must be a function');
+            }
+            this.addEventListener(a, true);
+        }
+    }
+
     addEventListener(type: string, listener: Callback, oneShot: boolean): void;
     addEventListener(type: string, listener: Callback): void;
     addEventListener(listener: Callback, oneShot: boolean): void;
@@ -68,17 +84,25 @@ export default class EventDispatcher {
     removeEventListener(listener: Callback): void;
     removeEventListener(type: string | Callback, listener?: Callback) {
         if (typeof type === 'function') {
-            this.defaultListeners.splice(this.defaultListeners.indexOf(type), 1);
+            if (this.defaultListeners.includes(type)) {
+                this.defaultListeners.splice(this.defaultListeners.indexOf(type), 1);
+            } else if (this.defaultOneShots.includes(type)) {
+                this.defaultOneShots.splice(this.defaultOneShots.indexOf(type), 1);
+            } else {
+                throw new Error('Provided default listener is not registered');
+            }
             return;
         }
 
         if (listener === undefined) {
-            throw new Error('Missing listener');
+            throw new Error('If provided with type, listener must also be provided');
         }
 
-        if (!this.listeners[type].includes(listener)) {
-            this.listeners[type].splice(this.listeners[type].indexOf(listener), 1);
+        if (!this.listeners[type] || !this.listeners[type].includes(listener)) {
+            throw new Error('Provided typed listener is not registered');
         }
+
+        this.listeners[type].splice(this.listeners[type].indexOf(listener), 1);
     }
 
     dispatchEvent(event: Event) {
