@@ -37,7 +37,7 @@ export default class TerminalView extends EventDispatcher {
         this._enabled = value;
     }
 
-    /** @type {boolean} Flag whether accepting input */
+    /** Flag whether accepting input */
     _expectsInput: boolean = false;
     get expectsInput() {
         return this._expectsInput;
@@ -47,8 +47,6 @@ export default class TerminalView extends EventDispatcher {
         this._expectsInput = value;
         this.input.disabled = !value;
     }
-
-    /** @type {EventDispatcher} Event triggered when output  */
 
     constructor(input: HTMLInputElement, output: HTMLElement) {
         super();
@@ -120,13 +118,13 @@ export default class TerminalView extends EventDispatcher {
 
         if (flush) {
             while (this.printStack.length > 0) {
-                let printInfo = this.printStack.shift() as PrintInfo;
+                const printInfo = this.printStack.shift() as PrintInfo;
                 clearInterval(printInfo.interval);
                 printInfo.target.innerHTML = printInfo.content.join('');
             }
         }
 
-        let printInfo: PrintInfo = {
+        const printInfo: PrintInfo = {
             target: element,
             originalText: text,
             content: splitHtml(text).map((c) => (c.length === 1 ? sanitizeHtml(c) : c)),
@@ -139,8 +137,8 @@ export default class TerminalView extends EventDispatcher {
         // Helper counter to handle text-aware delays in special characters.
         let delay = 0;
 
-        let interval = setInterval(() => {
-            let order = this.printStack.indexOf(printInfo);
+        const interval = setInterval(() => {
+            const order = this.printStack.indexOf(printInfo);
             if (order === -1) {
                 console.trace('printOut entry not in queue', printInfo);
                 clearInterval(interval);
@@ -168,11 +166,11 @@ export default class TerminalView extends EventDispatcher {
                 delay = 0;
                 printInfo.index++;
                 this.dispatchEvent(new CustomEvent('printChar', { detail: char }));
-            } else {
-                clearInterval(interval);
-                this.printStack.shift();
-                this.dispatchEvent(new CustomEvent('printDone', { detail: printInfo.originalText }));
+                return;
             }
+            clearInterval(interval);
+            this.printStack.shift();
+            this.dispatchEvent(new CustomEvent('printDone', { detail: printInfo.originalText }));
         }, delta);
         printInfo.interval = interval;
     }

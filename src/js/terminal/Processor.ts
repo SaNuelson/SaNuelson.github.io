@@ -11,6 +11,10 @@ class Memory {
         return this.variables[name];
     }
 
+    hasVar(name: string): boolean {
+        return this.variables.hasOwnProperty(name);
+    }
+
     setVar(name: string, value: any): void {
         if (this.variables[name] === value) return;
 
@@ -44,7 +48,7 @@ export class Context {
     }
 
     has(key: string) {
-        return this.memory.getVar(key) !== null;
+        return this.memory.hasVar(key);
     }
 
     set(key: string, value: any): void {
