@@ -21,12 +21,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Single deploy job since we're just deploying
-  deploy:
+  build-and-deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    permissions: write-all
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -39,6 +39,8 @@ jobs:
         run: npm install
       - name: Build
         run: npm run build
+      - name: Run tests
+        run: npm run test
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
@@ -46,6 +48,12 @@ jobs:
         with:
           # Upload dist repository
           path: './dist'
+      - name: Delete old deployment
+        uses: strumwolf/delete-deployment-environment@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: github-pages
+          onlyRemoveDeployments: true
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
